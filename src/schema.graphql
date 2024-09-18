@@ -1,0 +1,16 @@
+# src/schema.graphql
+
+type Task {
+  id: ID!
+  name: String!
+  description: String
+}
+
+type Query {
+  allTasks: [Task!]!
+  task(id: ID!): Task
+}
+
+type Mutation {
+  createTask(name: String!, description: String): Task!
+}

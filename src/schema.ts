@@ -1,53 +1,41 @@
+// src/schema.ts
 import { createSchema } from 'graphql-yoga'
-import { type Link } from '@prisma/client'
+import { readFileSync } from 'fs'
 import type { GraphQLContext } from './context'
+import { Resolvers } from './types/resolvers-types'
 
-const typeDefinitions = /* GraphQL */ `
-  type Query {
-    info: String!
-    feed: [Link!]!
-  }
+const typeDefs = readFileSync('./src/schema.graphql', 'utf8')
 
-  type Mutation {
-    postLink(url: String!, description: String!): Link!
-  }
-
-  type Link {
-    id: ID!
-    description: String!
-    url: String!
-  }
-`
-
-const resolvers = {
+const resolvers: Resolvers<GraphQLContext> = {
   Query: {
-    info: () => `This is the API of MiLife`,
-    feed: (parent: unknown, args: {}, context: GraphQLContext) =>
-      context.prisma.link.findMany(),
-  },
-  Link: {
-    id: (parent: Link) => parent.id,
-    description: (parent: Link) => parent.description,
-    url: (parent: Link) => parent.url,
+    allTasks: async (_parent: unknown, _args: {}, context: GraphQLContext) => {
+      return await context.prisma.task.findMany()
+    },
+    task: async (
+      _parent: unknown,
+      args: { id: string },
+      context: GraphQLContext
+    ) => {
+      return await context.prisma.task.findUnique({ where: { id: args.id } })
+    },
   },
   Mutation: {
-    async postLink(
-      parent: unknown,
-      args: { description: string; url: string },
+    createTask: async (
+      _parent: unknown,
+      args: { name: string; description?: string | null },
       context: GraphQLContext
-    ) {
-      const newLink = await context.prisma.link.create({
+    ) => {
+      return await context.prisma.task.create({
         data: {
-          url: args.url,
-          description: args.description,
+          name: args.name,
+          description: args.description ?? null,
         },
       })
-      return newLink
     },
   },
 }
 
 export const schema = createSchema({
-  resolvers: [resolvers],
-  typeDefs: [typeDefinitions],
+  typeDefs,
+  resolvers,
 })

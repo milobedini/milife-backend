@@ -5,12 +5,25 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child --respawn src/main.ts",
-    "start": "ts-node src/main.ts"
+    "start": "ts-node src/main.ts",
+    "codegen": "graphql-codegen",
+    "generate": "npx prisma generate",
+    "pull": "npx prisma db pull",
+    "push": "npx prisma db push",
+    "migrate": "npx prisma migrate dev",
+    "studio": "npx prisma studio",
+    "validate": "npx prisma validate",
+    "seed": "npx prisma db seed",
+    "schema": "npx prisma db push && npx prisma generate",
+    "refresh": "graphql-codegen && npx prisma db push && npx prisma generate "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-resolvers": "^4.2.1",
     "@prisma/client": "5.19.1",
     "@types/node": "18.16.16",
     "cross-env": "7.0.3",
