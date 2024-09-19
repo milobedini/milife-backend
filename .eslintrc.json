@@ -1,0 +1,89 @@
+{
+  "extends": ["prettier"],
+  "plugins": ["simple-import-sort", "@cspell"],
+  "rules": {
+    // import
+    "import/first": 2,
+    "import/exports-last": 2,
+    "import/no-cycle": 2,
+    "import/newline-after-import": 2,
+    "import/prefer-default-export": 0,
+    "import/order": 0,
+    "simple-import-sort/imports": 2,
+    "simple-import-sort/exports": 2,
+    // spellcheck
+    "@cspell/spellchecker": [
+      2,
+      {
+        "checkComments": true,
+        "ignoreImports": true,
+        "cspell": {
+          "language": "en-GB"
+        },
+        "customWordListFile": "./src/utils/dictionary.txt"
+      }
+    ],
+    // react
+    "react/react-in-jsx-scope": 0,
+    "react/jsx-props-no-spreading": 0,
+    "react/destructuring-assignment": 0,
+    "react-hooks/exhaustive-deps": 2,
+    "react/no-unused-prop-types": 0,
+    "react/jsx-curly-brace-presence": 0,
+    // general
+    "camelcase": [
+      2,
+      {
+        // Common filters
+        "allow": [".*requires.*", ".*contains.*"]
+      }
+    ],
+    "no-underscore-dangle": 0,
+    "no-octal-escape": 0
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "ignorePatterns": ["src/**/*.spec.ts", "src/**/*.spec.tsx", "**/*.mjs"],
+  "overrides": [
+    // overrides "simple-import-sort" config
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              [
+                // Packages `react` related packages come first.
+                "^react",
+                "^\\w",
+                "^@?",
+                "^@frw?\\w",
+                // Internal packages.
+                "^src(/.*|$)",
+                // Side effect imports.
+                "^\\u0000",
+                // Parent imports. Put `..` last.
+                "^\\.\\.(?!/?$)",
+                "^\\.\\./?$",
+                // Other relative imports. Put same-folder imports and `.` last.
+                "^\\./(?=.*/)(?!/?$)",
+                "^\\.(?!/?$)",
+                "^\\./?$"
+              ],
+              [
+                // Asset imports.
+                "^.+\\.?(json|png|jpg|jpeg|txt)$"
+              ],
+              [
+                // Style imports.
+                "^.+\\.?(css|scss)$"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

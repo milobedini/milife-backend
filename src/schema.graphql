@@ -19,11 +19,25 @@ type Task {
   description: String
 }
 
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 type Query {
   allTasks(filters: [FilterInput]): [Task!]!
   task(id: ID!): Task
+  me: User!
 }
 
 type Mutation {
   createTask(name: String!, description: String): Task!
+  signup(email: String!, password: String!, name: String!): User!
+  login(email: String!, password: String!): AuthPayload!
 }
