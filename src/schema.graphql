@@ -1,5 +1,18 @@
 # src/schema.graphql
 
+enum FilterOperation {
+  EQUALS
+  CONTAINS
+  STARTS_WITH
+  ENDS_WITH
+}
+
+input FilterInput {
+  field: String!
+  op: FilterOperation!
+  value: String!
+}
+
 type Task {
   id: ID!
   name: String!
@@ -7,7 +20,7 @@ type Task {
 }
 
 type Query {
-  allTasks: [Task!]!
+  allTasks(filters: [FilterInput]): [Task!]!
   task(id: ID!): Task
 }
 

@@ -16,6 +16,19 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type FilterInput = {
+  field: Scalars['String']['input'];
+  op: FilterOperation;
+  value: Scalars['String']['input'];
+};
+
+export enum FilterOperation {
+  Contains = 'CONTAINS',
+  EndsWith = 'ENDS_WITH',
+  Equals = 'EQUALS',
+  StartsWith = 'STARTS_WITH'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createTask: Task;
@@ -31,6 +44,11 @@ export type Query = {
   __typename?: 'Query';
   allTasks: Array<Task>;
   task?: Maybe<Task>;
+};
+
+
+export type QueryAllTasksArgs = {
+  filters?: InputMaybe<Array<InputMaybe<FilterInput>>>;
 };
 
 
@@ -117,6 +135,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  FilterInput: FilterInput;
+  FilterOperation: FilterOperation;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -127,6 +147,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  FilterInput: FilterInput;
   ID: Scalars['ID']['output'];
   Mutation: {};
   Query: {};
@@ -139,7 +160,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  allTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
+  allTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, Partial<QueryAllTasksArgs>>;
   task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTaskArgs, 'id'>>;
 };
 
