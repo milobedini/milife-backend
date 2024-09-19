@@ -37,9 +37,16 @@ export enum FilterOperation {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addMyTask?: Maybe<Task>;
   createTask: Task;
   login: AuthPayload;
+  removeMyTask?: Maybe<Task>;
   signup: User;
+};
+
+
+export type MutationAddMyTaskArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -55,6 +62,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationRemoveMyTaskArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationSignupArgs = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -65,6 +77,7 @@ export type Query = {
   __typename?: 'Query';
   allTasks: Array<Task>;
   me: User;
+  myTasks: Array<Task>;
   task?: Maybe<Task>;
 };
 
@@ -83,6 +96,7 @@ export type Task = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  users?: Maybe<Array<User>>;
 };
 
 export type User = {
@@ -90,6 +104,7 @@ export type User = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  tasks?: Maybe<Array<Task>>;
 };
 
 
@@ -195,14 +210,17 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addMyTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationAddMyTaskArgs, 'id'>>;
   createTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'name'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
+  removeMyTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationRemoveMyTaskArgs, 'id'>>;
   signup?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'email' | 'name' | 'password'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   allTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, Partial<QueryAllTasksArgs>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  myTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
   task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTaskArgs, 'id'>>;
 };
 
@@ -210,6 +228,7 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -217,6 +236,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tasks?: Resolver<Maybe<Array<ResolversTypes['Task']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

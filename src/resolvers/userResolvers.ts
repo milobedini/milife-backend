@@ -5,11 +5,16 @@ import { MutationLoginArgs, MutationSignupArgs } from '../types/resolvers-types'
 export const userResolvers = {
   Query: {
     // Get the current user
-    me(_parent: unknown, _args: unknown, context: GraphQLContext) {
+    async me(_parent: unknown, _args: unknown, context: GraphQLContext) {
       if (!context.currentUser) {
         throw new Error('Not authenticated');
       }
-      return context.currentUser;
+      // Fetch the current user and include their tasks
+      const user = await context.prisma.user.findUnique({
+        where: { id: context.currentUser.id }
+      });
+
+      return user;
     }
   },
 

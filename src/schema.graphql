@@ -17,12 +17,14 @@ type Task {
   id: ID!
   name: String!
   description: String
+  users: [User!]
 }
 
 type User {
   id: ID!
   name: String!
   email: String!
+  tasks: [Task!]
 }
 
 type AuthPayload {
@@ -31,13 +33,16 @@ type AuthPayload {
 }
 
 type Query {
+  me: User!
+  myTasks: [Task!]!
   allTasks(filters: [FilterInput]): [Task!]!
   task(id: ID!): Task
-  me: User!
 }
 
 type Mutation {
   createTask(name: String!, description: String): Task!
   signup(email: String!, password: String!, name: String!): User!
   login(email: String!, password: String!): AuthPayload!
+  removeMyTask(id: ID!): Task
+  addMyTask(id: ID!): Task
 }
