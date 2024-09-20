@@ -13,11 +13,26 @@ input FilterInput {
   value: String!
 }
 
+type MessageReturn {
+  message: String!
+}
+
 type Task {
   id: ID!
   name: String!
   description: String
   users: [User!]
+  completions: [TaskCompletion!]
+}
+
+type TaskCompletion {
+  id: ID!
+  userId: ID!
+  taskId: ID!
+  user: User!
+  task: Task!
+  date: String!
+  completed: Boolean!
 }
 
 type User {
@@ -25,6 +40,7 @@ type User {
   name: String!
   email: String!
   tasks: [Task!]
+  completions: [TaskCompletion!]
 }
 
 type AuthPayload {
@@ -37,6 +53,7 @@ type Query {
   myTasks: [Task!]!
   allTasks(filters: [FilterInput]): [Task!]!
   task(id: ID!): Task
+  myTaskCompletions(taskId: ID!, startDate: String, endDate: String): [TaskCompletion!]!
 }
 
 type Mutation {
@@ -45,4 +62,6 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   removeMyTask(id: ID!): Task
   addMyTask(id: ID!): Task
+  completeTask(taskId: ID!, date: String!): TaskCompletion!
+  uncompleteTask(taskId: ID!, date: String!): MessageReturn!
 }

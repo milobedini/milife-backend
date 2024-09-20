@@ -1,3 +1,5 @@
+// schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,18 +10,20 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String      @unique
-  password  String
-  userTasks UserTask[]
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String           @unique
+  password    String
+  userTasks   UserTask[]
+  completions TaskCompletion[]
 }
 
 model Task {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
   description String?
-  userTasks UserTask[]
+  userTasks   UserTask[]
+  completions TaskCompletion[]
 }
 
 model UserTask {
@@ -31,4 +35,17 @@ model UserTask {
   task   Task   @relation(fields: [taskId], references: [id])
 
   @@unique([userId, taskId])
+}
+
+model TaskCompletion {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  taskId    String   @db.ObjectId
+  date      DateTime
+  completed Boolean  @default(true)
+
+  user      User     @relation(fields: [userId], references: [id])
+  task      Task     @relation(fields: [taskId], references: [id])
+
+  @@unique([userId, taskId, date])
 }
