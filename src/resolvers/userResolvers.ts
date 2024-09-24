@@ -1,5 +1,5 @@
 // src/resolvers/userResolvers.ts
-import { Resolvers, TaskCompletion, User } from '../types/resolvers-types';
+import { MessageReturn, Resolvers, TaskCompletion, User } from '../types/resolvers-types';
 import { GraphQLContext } from '../context';
 import { comparePassword, generateToken, hashPassword } from '../services/authService';
 import { MutationLoginArgs, MutationSignupArgs, User as UserType } from '../types/resolvers-types';
@@ -11,12 +11,20 @@ export const userResolvers: Resolvers<GraphQLContext> = {
         throw new Error('Not authenticated');
       }
       const user = await context.prisma.user.findUnique({
-        where: { id: context.currentUser.id }
+        where: { id: context.currentUser.id },
+        include: {
+          userTasks: {
+            include: {
+              task: true
+            }
+          },
+          completions: true
+        }
       });
       if (!user) {
         throw new Error('User not found');
       }
-      return user;
+      return user as unknown as User;
     }
   },
   Mutation: {
