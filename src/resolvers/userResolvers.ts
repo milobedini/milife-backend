@@ -123,6 +123,13 @@ export const userResolvers: Resolvers<GraphQLContext> = {
         throw new Error('Task not found or not assigned to user');
       }
 
+      // Delete associated TaskCompletion records first
+      await context.prisma.taskCompletion.deleteMany({
+        where: {
+          userTaskId: userTask.id
+        }
+      });
+
       await context.prisma.userTask.delete({
         where: { id: userTask.id }
       });
