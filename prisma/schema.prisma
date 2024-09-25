@@ -15,21 +15,22 @@ model User {
   email       String           @unique
   password    String
   userTasks   UserTask[]
-  completions TaskCompletion[]
 }
 
 model Task {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
+  image       String?
   userTasks   UserTask[]
-  completions TaskCompletion[]
 }
 
 model UserTask {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
   taskId String @db.ObjectId
+  days   Int[] // 0-6, 0 = Sunday, 6 = Saturday
+  completions TaskCompletion[] 
 
   user   User   @relation(fields: [userId], references: [id])
   task   Task   @relation(fields: [taskId], references: [id])
@@ -39,13 +40,11 @@ model UserTask {
 
 model TaskCompletion {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  taskId    String   @db.ObjectId
+  userTaskId String   @db.ObjectId  // Reference UserTask instead of Task directly
   date      DateTime
   completed Boolean  @default(true)
 
-  user      User     @relation(fields: [userId], references: [id])
-  task      Task     @relation(fields: [taskId], references: [id])
+  userTask  UserTask  @relation(fields: [userTaskId], references: [id])
 
-  @@unique([userId, taskId, date])
+  @@unique([userTaskId, date]) // Unique constraint on userTaskId and date
 }

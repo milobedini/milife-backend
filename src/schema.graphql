@@ -21,16 +21,12 @@ type Task {
   id: ID!
   name: String!
   description: String
-  users: [User!]
-  completions: [TaskCompletion!]
+  image: String
 }
 
 type TaskCompletion {
   id: ID!
-  userId: ID!
-  taskId: ID!
-  user: User!
-  task: Task!
+  userTask: UserTask! # Use UserTask instead of Task
   date: String!
   completed: Boolean!
 }
@@ -39,8 +35,15 @@ type User {
   id: ID!
   name: String!
   email: String!
-  tasks: [Task!]
+  userTasks: [UserTask!]
   completions: [TaskCompletion!]
+}
+
+type UserTask {
+  id: ID!
+  userId: ID!
+  task: Task!
+  days: [Int!]! # Array of integers representing the days
 }
 
 type AuthPayload {
@@ -50,18 +53,18 @@ type AuthPayload {
 
 type Query {
   me: User!
-  myTasks: [Task!]!
+  userTasks: [UserTask!]!
   allTasks(filters: [FilterInput]): [Task!]!
   task(id: ID!): Task
-  myTaskCompletions(taskId: ID!, startDate: String, endDate: String): [TaskCompletion!]!
+  userCompletions(taskId: ID, startDate: String, endDate: String): [TaskCompletion!]!
 }
 
 type Mutation {
   createTask(name: String!, description: String): Task!
   signup(email: String!, password: String!, name: String!): User!
   login(email: String!, password: String!): AuthPayload!
-  removeMyTask(id: ID!): Task
-  addMyTask(id: ID!): Task
-  completeTask(taskId: ID!, date: String!): TaskCompletion!
-  uncompleteTask(taskId: ID!, date: String!): MessageReturn!
+  addMyTask(id: ID!): UserTask! # Return UserTask
+  removeMyTask(id: ID!): MessageReturn! # Return UserTask
+  completeTask(userTaskId: ID!, date: String!): TaskCompletion! # Now uses userTaskId
+  uncompleteTask(userTaskId: ID!, date: String!): MessageReturn! # Now uses userTaskId
 }
